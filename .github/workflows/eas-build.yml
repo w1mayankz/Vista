@@ -1,0 +1,29 @@
+name: Compile Vista APK
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: EAS Cloud Android Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: npm
+
+      - name: Setup Expo & EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Compile APK via EAS Cloud
+        run: eas build --platform android --profile production --non-interactive
