@@ -12,18 +12,21 @@
       "backgroundColor": "#0A0A0A"
     },
     "ios": {
-      "supportsTablet": false
+      "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#0A0A0A"
       },
-      "package": "com.vista.browser",
-      "hardwareAccelerated": true
+      "package": "com.w1mayankz.vista"
     },
     "web": {
       "favicon": "./assets/icon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "42699cbf-8596-44d0-ac8f-682c34598194"
+      }
     }
   }
 }
