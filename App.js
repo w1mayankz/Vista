@@ -18,12 +18,6 @@ export default function App() {
 
       {/* The Safe Frame for the Top Glass */}
       <View style={styles.topGlassFrame}>
-        <BlurView 
-          intensity={80} 
-          tint="dark" 
-          experimentalBlurMethod="dimezisBlurView"
-          style={StyleSheet.absoluteFill} 
-        />
       </View>
 
       <FloatingControls />
