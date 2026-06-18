@@ -1,66 +1,94 @@
-// src/components/FloatingControls.js
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { BlurView } from 'expo-blur';
+import React, { useEffect, useRef } from 'react';
+import { Animated, Keyboard, StyleSheet, TextInput, Platform } from 'react-native';
 import ActionButton from './ActionButton';
 import DomainCapsule from './DomainCapsule';
-import { COLORS, GEOMETRY, EFFECTS } from '../constants/layout';
+import { LAYOUT } from '../constants/layout';
 
-export default function FloatingControls({ navState, goBack, reload }) {
+export default function FloatingControls() {
+  // The GPU-accelerated value that will move the entire bottom row up and down
+  const translateY = useRef(new Animated.Value(0)).current;
+  
+  // A reference to our hidden keyboard trigger
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    // Listeners that detect the exact millisecond the keyboard opens/closes
+    const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+
+    const keyboardShowListener = Keyboard.addListener(showEvent, (e) => {
+      // Push the bar up by the exact height of the keyboard
+      Animated.spring(translateY, {
+        toValue: -e.endCoordinates.height + 10, // Moves up (negative Y) and adds 10px breathing room
+        useNativeDriver: true, // Forces 60fps animation
+        speed: 14,
+        bounciness: 4,
+      }).start();
+    });
+
+    const keyboardHideListener = Keyboard.addListener(hideEvent, () => {
+      // Drop the bar back to its original resting place
+      Animated.spring(translateY, {
+        toValue: 0, 
+        useNativeDriver: true,
+        speed: 14,
+        bounciness: 4,
+      }).start();
+    });
+
+    return () => {
+      keyboardShowListener.remove();
+      keyboardHideListener.remove();
+    };
+  }, []);
+
+  // When the user taps the glass capsule, focus the hidden input to summon the keyboard
+  const handleCapsulePress = () => {
+    inputRef.current?.focus();
+  };
+
   return (
-    <View style={styles.positioningLayer}>
-      <BlurView 
-        intensity={EFFECTS.blurIntensity} 
-        tint={EFFECTS.blurTint} 
-        style={styles.liquidGlassContainer}
-      >
-        {/* Left: History Back Chevron */}
-        <ActionButton 
-          iconName="chevron-back" 
-          onPress={goBack} 
-          disabled={!navState.canGoBack} 
-        />
-        
-        {/* Center: Active Domain, Tab Switcher, and Reload */}
-        <DomainCapsule 
-          displayDomain={navState.displayDomain} 
-          onReload={reload}
-          onTabPress={() => console.log('Tab Switcher Triggered')}
-        />
-        
-        {/* Right: Options Menu */}
-        <ActionButton 
-          iconName="ellipsis-horizontal" 
-          onPress={() => console.log('Menu Triggered')} 
-        />
-      </BlurView>
-    </View>
+    <Animated.View style={[styles.masterContainer, { transform: [{ translateY }] }]}>
+      
+      {/* This is the ghost input. It stays invisible but forces the 
+        phone's native keyboard to open when the capsule is tapped. 
+      */}
+      <TextInput 
+        ref={inputRef} 
+        style={styles.hiddenInput} 
+        keyboardType="web-search"
+        keyboardAppearance="dark"
+        autoCapitalize="none"
+        autoCorrect={false}
+      />
+
+      {/* LEFT: Back Button (Disabled on Start Page, so it's slightly dimmed) */}
+      <ActionButton iconName="chevron-back" disabled={true} onPress={() => {}} />
+      
+      {/* CENTER: The Domain Squircle */}
+      <DomainCapsule onPress={handleCapsulePress} />
+      
+      {/* RIGHT: Menu Button */}
+      <ActionButton iconName="ellipsis-horizontal" onPress={() => {}} />
+
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
-  positioningLayer: {
+  masterContainer: {
     position: 'absolute',
-    bottom: GEOMETRY.barBottomMargin,
-    width: GEOMETRY.barWidthPercent,
-    alignSelf: 'center',
-    // Diffused spatial drop shadow to detach the bar from the web content
-    shadowColor: EFFECTS.shadowColor,
-    shadowOffset: EFFECTS.shadowOffset,
-    shadowOpacity: EFFECTS.shadowOpacity,
-    shadowRadius: EFFECTS.shadowRadius,
-    elevation: EFFECTS.elevation,
-  },
-  liquidGlassContainer: {
+    bottom: LAYOUT.bottomBar.bottomOffset,
+    left: LAYOUT.bottomBar.horizontalPadding,
+    right: LAYOUT.bottomBar.horizontalPadding,
     flexDirection: 'row',
-    height: GEOMETRY.barHeight,
-    borderRadius: GEOMETRY.outerRadius, // Continuous outer curve
-    backgroundColor: COLORS.glassBackground, // Hardware blended base
+    justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 10,
-    // The microscopic specular highlight to catch edge light
-    borderWidth: GEOMETRY.specularBorderWidth,
-    borderColor: COLORS.glassHighlight,
-    overflow: 'hidden', // Masks the hardware blur inside the geometry bounds
+    gap: LAYOUT.bottomBar.elementSpacing, // Perfectly separates the 3 pieces
+    backgroundColor: 'transparent',
+    zIndex: 100, // Forces the bar to stay on top of all other elements
+  },
+  hiddenInput: {
+    display: 'none',
   }
 });
