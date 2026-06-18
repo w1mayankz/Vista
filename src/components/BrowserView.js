@@ -1,26 +1,17 @@
-// src/components/BrowserView.js
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { WebView } from 'react-native-webview';
 
-export default function BrowserView({ webViewRef, currentUrl, onNavigationStateChange }) {
+export default function BrowserView() {
   return (
     <WebView
-      ref={webViewRef}
-      source={{ uri: currentUrl }}
-      onNavigationStateChange={onNavigationStateChange}
+      // Loading Apple's site so you can test the exact "Top Dogs" look from the video
+      source={{ uri: 'https://www.apple.com' }} 
       style={styles.webview}
-      // Native Hardware Capabilities
-      pullToRefreshEnabled={true}
-      allowsBackForwardNavigationGestures={true} // Essential for the native iOS swipe-back feel
-      sharedCookiesEnabled={true}
-      thirdPartyCookiesEnabled={true}
-      allowsInlineMediaPlayback={true}
-      mediaPlaybackRequiresUserAction={false}
-      // Performance tweaks for smooth rendering under the floating bar
-      decelerationRate="normal"
-      javaScriptEnabled={true}
-      domStorageEnabled={true}
+      // These props tell Android to use the GPU, making the blur crash-proof
+      hardwareAccelerationCompat={true}
+      androidLayerType="hardware"
+      setBuiltInZoomControls={false}
     />
   );
 }
@@ -28,6 +19,6 @@ export default function BrowserView({ webViewRef, currentUrl, onNavigationStateC
 const styles = StyleSheet.create({
   webview: {
     flex: 1,
-    backgroundColor: '#121212', // Matches the master placeholder from App.js
-  },
+    backgroundColor: '#000',
+  }
 });
