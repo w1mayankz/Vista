@@ -1,58 +1,85 @@
-// src/components/DomainCapsule.js
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useRef } from 'react';
+import { Animated, Pressable, Text, StyleSheet } from 'react-native';
+import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, GEOMETRY, TYPOGRAPHY } from '../constants/layout';
+import { LAYOUT } from '../constants/layout';
 
-export default function DomainCapsule({ displayDomain, onReload, onTabPress }) {
+export default function DomainCapsule({ onPress }) {
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  const handlePressIn = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 0.95, 
+      useNativeDriver: true,
+      speed: 20,
+      bounciness: 5,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 1,
+      useNativeDriver: true,
+      speed: 15,
+      bounciness: 12,
+    }).start();
+  };
+
   return (
-    <View style={styles.capsule}>
-      {/* Tab Switcher Icon (Left) */}
-      <TouchableOpacity onPress={onTabPress} activeOpacity={0.7} style={styles.iconWrapper}>
-        <Ionicons name="copy-outline" size={18} color={COLORS.iconActive} />
-      </TouchableOpacity>
-
-      {/* Centered Domain Text */}
-      <View style={styles.textContainer}>
-        <Text style={styles.domainText} numberOfLines={1} ellipsizeMode="tail">
-          {displayDomain}
-        </Text>
-      </View>
-
-      {/* Reload Glyph (Right) */}
-      <TouchableOpacity onPress={onReload} activeOpacity={0.7} style={styles.iconWrapper}>
-        <Ionicons name="refresh" size={18} color={COLORS.iconActive} />
-      </TouchableOpacity>
-    </View>
+    <Animated.View style={[styles.wrapper, { transform: [{ scale: scaleAnim }] }]}>
+      <BlurView intensity={LAYOUT.glass.intensity} tint={LAYOUT.glass.tint} style={styles.blurContainer}>
+        <Pressable
+          onPressIn={handlePressIn}
+          onPressOut={handlePressOut}
+          onPress={onPress}
+          style={styles.touchableArea}
+        >
+          {/* CORRECT LEFT ICON: Website/Reader View */}
+          <Ionicons name="reader-outline" size={18} color="#FFFFFF" style={styles.icon} />
+          
+          {/* CENTER TEXT */}
+          <Text style={styles.placeholderText}>Type Something</Text>
+          
+          {/* CORRECT RIGHT ICON: Refresh/Reload */}
+          <Ionicons name="refresh" size={18} color="#FFFFFF" style={styles.icon} />
+        </Pressable>
+      </BlurView>
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
-  capsule: {
-    flex: 1, // Takes up remaining space between the outer action buttons
-    height: GEOMETRY.capsuleHeight,
-    backgroundColor: COLORS.domainCapsuleBg,
-    borderRadius: GEOMETRY.innerRadius, // Mathematically nested curve
+  wrapper: {
+    flex: 1, 
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  blurContainer: {
+    height: LAYOUT.bottomBar.squircleHeight,
+    borderRadius: LAYOUT.bottomBar.squircleRadius,
+    overflow: 'hidden',
+    borderWidth: 0.5,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  touchableArea: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 12, // Spacing from edges to icons
-    marginHorizontal: 12, // Spacing between capsule and outer action buttons
+    paddingHorizontal: 16,
   },
-  iconWrapper: {
-    padding: 4, // Increases touch target size without expanding visual size
-  },
-  textContainer: {
+  placeholderText: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 8,
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '400',
+    textAlign: 'center',
+    opacity: 0.8,
   },
-  domainText: {
-    fontFamily: TYPOGRAPHY.fontFamily,
-    fontSize: TYPOGRAPHY.fontSizeDomain,
-    fontWeight: TYPOGRAPHY.fontWeightDomain,
-    letterSpacing: TYPOGRAPHY.letterSpacingDomain,
-    color: COLORS.textPrimary,
-  },
+  icon: {
+    opacity: 0.8,
+  }
 });
