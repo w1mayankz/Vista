@@ -8,11 +8,8 @@ export default function DomainCapsule({ onPress }) {
   return (
     <View style={styles.wrapper}>
       <View style={styles.glassFrame}>
-        <BlurView 
-          intensity={LAYOUT.glass.intensity} 
-          tint={LAYOUT.glass.tint} 
-          style={StyleSheet.absoluteFill} 
-        />
+        {/* TRUE LIQUID GLASS */}
+        <BlurView intensity={LAYOUT.glass.intensity} tint={LAYOUT.glass.tint} style={StyleSheet.absoluteFill} />
         <Pressable
           onPress={onPress}
           style={({ pressed }) => [
@@ -21,7 +18,7 @@ export default function DomainCapsule({ onPress }) {
           ]}
         >
           <Ionicons name="reader-outline" size={18} color="#FFFFFF" />
-          <Text style={styles.placeholderText}>Type Something</Text>
+          <Text style={styles.placeholderText}>apple.com</Text>
           <Ionicons name="refresh" size={18} color="#FFFFFF" />
         </Pressable>
       </View>
@@ -34,14 +31,14 @@ const styles = StyleSheet.create({
     flex: 1, 
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 5,
   },
   glassFrame: {
     height: LAYOUT.bottomBar.squircleHeight,
     borderRadius: LAYOUT.bottomBar.squircleRadius,
-    overflow: 'hidden',
+    overflow: 'hidden', // CRITICAL: Keeps blur inside the squircle
     borderWidth: 0.5,
     borderColor: 'rgba(255, 255, 255, 0.2)',
   },
