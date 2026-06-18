@@ -3,7 +3,6 @@ import { StyleSheet, ImageBackground, View, StatusBar, Platform } from 'react-na
 import { BlurView } from 'expo-blur';
 import FloatingControls from './src/components/FloatingControls';
 
-// This asks the phone exactly how tall its specific status bar notch/cutout is
 const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? 47 : StatusBar.currentHeight || 24;
 
 export default function App() {
@@ -13,24 +12,21 @@ export default function App() {
       style={styles.container}
       resizeMode="cover"
     >
-      {/* translucent={true} forces the app to draw under the notch/status bar area.
-        Without this, Android forces a solid black block at the top.
-      */}
       <StatusBar barStyle="light-content" backgroundColor="transparent" translucent={true} />
       
-      {/* This is the empty space where the actual web browser will go later. */}
       <View style={styles.browserPlaceholder} />
 
-      {/* THE NEW TOP GLASS PROTECTOR */}
-      <BlurView 
-        intensity={80} 
-        tint="dark" 
-        style={styles.topGlass} 
-      />
+      {/* The Safe Frame for the Top Glass */}
+      <View style={styles.topGlassFrame}>
+        <BlurView 
+          intensity={80} 
+          tint="dark" 
+          experimentalBlurMethod="dimezisBlurView"
+          style={StyleSheet.absoluteFill} 
+        />
+      </View>
 
-      {/* Our masterpiece Liquid Glass bottom bar with the keyboard physics */}
       <FloatingControls />
-
     </ImageBackground>
   );
 }
@@ -43,15 +39,15 @@ const styles = StyleSheet.create({
   browserPlaceholder: {
     flex: 1,
   },
-  topGlass: {
+  topGlassFrame: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
-    height: STATUS_BAR_HEIGHT + 10, // Covers the icons plus 10px of breathing room
-    zIndex: 50, // Keeps it above the website content
-    // Optional: Add the same thin border to the bottom edge of this glass
+    height: STATUS_BAR_HEIGHT + 10, 
+    zIndex: 50, 
     borderBottomWidth: 0.5,
     borderBottomColor: 'rgba(255, 255, 255, 0.2)',
+    overflow: 'hidden', // Forces the blur to stay inside the frame
   }
 });
