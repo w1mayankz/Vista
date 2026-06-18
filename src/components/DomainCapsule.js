@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Animated, Pressable, Text, StyleSheet } from 'react-native';
+import { Animated, Pressable, Text, StyleSheet, View } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import { LAYOUT } from '../constants/layout';
@@ -27,23 +27,25 @@ export default function DomainCapsule({ onPress }) {
 
   return (
     <Animated.View style={[styles.wrapper, { transform: [{ scale: scaleAnim }] }]}>
-      <BlurView intensity={LAYOUT.glass.intensity} tint={LAYOUT.glass.tint} style={styles.blurContainer}>
+      {/* The Safe Frame holding the curves and borders */}
+      <View style={styles.glassFrame}>
+        <BlurView 
+          intensity={LAYOUT.glass.intensity} 
+          tint={LAYOUT.glass.tint} 
+          experimentalBlurMethod="dimezisBlurView"
+          style={StyleSheet.absoluteFill} 
+        />
         <Pressable
           onPressIn={handlePressIn}
           onPressOut={handlePressOut}
           onPress={onPress}
           style={styles.touchableArea}
         >
-          {/* CORRECT LEFT ICON: Website/Reader View */}
           <Ionicons name="reader-outline" size={18} color="#FFFFFF" style={styles.icon} />
-          
-          {/* CENTER TEXT */}
           <Text style={styles.placeholderText}>Type Something</Text>
-          
-          {/* CORRECT RIGHT ICON: Refresh/Reload */}
           <Ionicons name="refresh" size={18} color="#FFFFFF" style={styles.icon} />
         </Pressable>
-      </BlurView>
+      </View>
     </Animated.View>
   );
 }
@@ -57,7 +59,7 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 5,
   },
-  blurContainer: {
+  glassFrame: {
     height: LAYOUT.bottomBar.squircleHeight,
     borderRadius: LAYOUT.bottomBar.squircleRadius,
     overflow: 'hidden',
