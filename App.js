@@ -1,58 +1,57 @@
-// App.js
 import React from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View } from 'react-native';
-import { useFonts } from 'expo-font';
-
-// Import our custom engine and UI architecture
-import BrowserView from './src/components/BrowserView';
+import { StyleSheet, ImageBackground, View, StatusBar, Platform } from 'react-native';
+import { BlurView } from 'expo-blur';
 import FloatingControls from './src/components/FloatingControls';
-import { useNavigationCore } from './src/hooks/useNavigationCore';
+
+// This asks the phone exactly how tall its specific status bar notch/cutout is
+const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? 47 : StatusBar.currentHeight || 24;
 
 export default function App() {
-  // Load the Inter font for perfect, geometric domain typography
-  const [fontsLoaded] = useFonts({
-    'Inter': require('@expo-google-fonts/inter/Inter_500Medium.ttf'), // You can install this via npm or load a local asset
-  });
-
-  // Initialize our state controller
-  const {
-    webViewRef,
-    navState,
-    handleNavigationStateChange,
-    goBack,
-    reload,
-  } = useNavigationCore();
-
-  // If fonts are still loading, render the dark base
-  if (!fontsLoaded) {
-    return <View style={styles.container} />;
-  }
-
   return (
-    <View style={styles.container}>
-      <StatusBar style="light" translucent={true} backgroundColor="transparent" />
+    <ImageBackground 
+      source={{ uri: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop' }} 
+      style={styles.container}
+      resizeMode="cover"
+    >
+      {/* translucent={true} forces the app to draw under the notch/status bar area.
+        Without this, Android forces a solid black block at the top.
+      */}
+      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent={true} />
       
-      {/* The Master Rendering Engine */}
-      <BrowserView 
-        webViewRef={webViewRef}
-        currentUrl={navState.url}
-        onNavigationStateChange={handleNavigationStateChange}
+      {/* This is the empty space where the actual web browser will go later. */}
+      <View style={styles.browserPlaceholder} />
+
+      {/* THE NEW TOP GLASS PROTECTOR */}
+      <BlurView 
+        intensity={80} 
+        tint="dark" 
+        style={styles.topGlass} 
       />
-      
-      {/* The Liquid Glass Interface */}
-      <FloatingControls 
-        navState={navState}
-        goBack={goBack}
-        reload={reload}
-      />
-    </View>
+
+      {/* Our masterpiece Liquid Glass bottom bar with the keyboard physics */}
+      <FloatingControls />
+
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0A', 
+    backgroundColor: '#000', 
   },
+  browserPlaceholder: {
+    flex: 1,
+  },
+  topGlass: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: STATUS_BAR_HEIGHT + 10, // Covers the icons plus 10px of breathing room
+    zIndex: 50, // Keeps it above the website content
+    // Optional: Add the same thin border to the bottom edge of this glass
+    borderBottomWidth: 0.5,
+    borderBottomColor: 'rgba(255, 255, 255, 0.2)',
+  }
 });
