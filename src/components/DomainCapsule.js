@@ -1,46 +1,31 @@
-import React, { useRef } from 'react';
-import { Animated, Pressable, Text, StyleSheet, View } from 'react-native';
+import React from 'react';
+import { Pressable, Text, StyleSheet, View } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import { LAYOUT } from '../constants/layout';
 
 export default function DomainCapsule({ onPress }) {
-  const scaleAnim = useRef(new Animated.Value(1)).current;
-
-  const handlePressIn = () => {
-    Animated.spring(scaleAnim, {
-      toValue: 0.95, 
-      useNativeDriver: true,
-      speed: 20,
-      bounciness: 5,
-    }).start();
-  };
-
-  const handlePressOut = () => {
-    Animated.spring(scaleAnim, {
-      toValue: 1,
-      useNativeDriver: true,
-      speed: 15,
-      bounciness: 12,
-    }).start();
-  };
-
   return (
-    <Animated.View style={[styles.wrapper, { transform: [{ scale: scaleAnim }] }]}>
-      {/* The Safe Frame holding the curves and borders */}
+    <View style={styles.wrapper}>
       <View style={styles.glassFrame}>
+        <BlurView 
+          intensity={LAYOUT.glass.intensity} 
+          tint={LAYOUT.glass.tint} 
+          style={StyleSheet.absoluteFill} 
+        />
         <Pressable
-          onPressIn={handlePressIn}
-          onPressOut={handlePressOut}
           onPress={onPress}
-          style={styles.touchableArea}
+          style={({ pressed }) => [
+            styles.touchableArea, 
+            { opacity: pressed ? 0.4 : 1 }
+          ]}
         >
-          <Ionicons name="reader-outline" size={18} color="#FFFFFF" style={styles.icon} />
+          <Ionicons name="reader-outline" size={18} color="#FFFFFF" />
           <Text style={styles.placeholderText}>Type Something</Text>
-          <Ionicons name="refresh" size={18} color="#FFFFFF" style={styles.icon} />
+          <Ionicons name="refresh" size={18} color="#FFFFFF" />
         </Pressable>
       </View>
-    </Animated.View>
+    </View>
   );
 }
 
@@ -73,9 +58,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '400',
     textAlign: 'center',
-    opacity: 0.8,
   },
-  icon: {
-    opacity: 0.8,
-  }
 });
