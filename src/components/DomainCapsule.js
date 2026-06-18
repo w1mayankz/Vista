@@ -29,12 +29,6 @@ export default function DomainCapsule({ onPress }) {
     <Animated.View style={[styles.wrapper, { transform: [{ scale: scaleAnim }] }]}>
       {/* The Safe Frame holding the curves and borders */}
       <View style={styles.glassFrame}>
-        <BlurView 
-          intensity={LAYOUT.glass.intensity} 
-          tint={LAYOUT.glass.tint} 
-          experimentalBlurMethod="dimezisBlurView"
-          style={StyleSheet.absoluteFill} 
-        />
         <Pressable
           onPressIn={handlePressIn}
           onPressOut={handlePressOut}
