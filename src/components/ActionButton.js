@@ -8,15 +8,11 @@ export default function ActionButton({ iconName, onPress, disabled = false }) {
   return (
     <View style={styles.wrapper}>
       <View style={styles.glassFrame}>
-        <BlurView 
-          intensity={LAYOUT.glass.intensity} 
-          tint={LAYOUT.glass.tint} 
-          style={StyleSheet.absoluteFill} 
-        />
+        {/* TRUE LIQUID GLASS */}
+        <BlurView intensity={LAYOUT.glass.intensity} tint={LAYOUT.glass.tint} style={StyleSheet.absoluteFill} />
         <Pressable
           onPress={onPress}
           disabled={disabled}
-          // This creates the perfect Apple fade effect when pressed, without crashing the GPU
           style={({ pressed }) => [
             styles.touchableArea, 
             { opacity: pressed || disabled ? 0.4 : 1 }
@@ -33,7 +29,7 @@ const styles = StyleSheet.create({
   wrapper: {
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 5,
   },
@@ -41,7 +37,7 @@ const styles = StyleSheet.create({
     width: LAYOUT.bottomBar.circleSize,
     height: LAYOUT.bottomBar.circleSize,
     borderRadius: LAYOUT.bottomBar.circleSize / 2,
-    overflow: 'hidden',
+    overflow: 'hidden', // CRITICAL: Keeps blur inside the circle
     borderWidth: 0.5,
     borderColor: 'rgba(255, 255, 255, 0.2)',
   },
