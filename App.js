@@ -1,6 +1,5 @@
 import React from 'react';
 import { StyleSheet, View, StatusBar, Platform } from 'react-native';
-import { BlurView } from 'expo-blur';
 import FloatingControls from './src/components/FloatingControls';
 import BrowserView from './src/components/BrowserView';
 
@@ -9,15 +8,14 @@ const STATUS_BAR_HEIGHT = Platform.OS === 'ios' ? 47 : StatusBar.currentHeight |
 export default function App() {
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent={true} />
+      {/* Dark status bar text for Light Theme */}
+      <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent={true} />
       
       {/* THE LIVE WEBSITE */}
       <BrowserView />
 
-      {/* TRUE LIQUID GLASS TOP PROTECTOR */}
-      <View style={styles.topGlassFrame}>
-        <BlurView intensity={80} tint="dark" style={StyleSheet.absoluteFill} />
-      </View>
+      {/* SOLID WHITE TOP PROTECTOR */}
+      <View style={styles.topSolidFrame} />
 
       {/* BOTTOM NAVIGATION BAR */}
       <FloatingControls />
@@ -28,17 +26,17 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000', 
+    backgroundColor: '#FFFFFF', // Changed to white
   },
-  topGlassFrame: {
+  topSolidFrame: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     height: STATUS_BAR_HEIGHT + 10, 
     zIndex: 50, 
-    overflow: 'hidden',
+    backgroundColor: '#FFFFFF', // 100% Opaque White
     borderBottomWidth: 0.5,
-    borderBottomColor: 'rgba(255, 255, 255, 0.2)',
+    borderBottomColor: 'rgba(0, 0, 0, 0.1)', // Subtle shadow line
   }
 });
