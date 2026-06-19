@@ -13,8 +13,12 @@ export default function DomainCapsule({ onPress }) {
           { opacity: pressed ? 0.4 : 1 }
         ]}
       >
+        {/* Safari style text-options icon */}
         <Ionicons name="text-outline" size={18} color="#000000" />
+        
         <Text style={styles.domainText}>apple.com</Text>
+        
+        {/* Safari style refresh icon */}
         <Ionicons name="refresh" size={18} color="#000000" />
       </Pressable>
     </View>
@@ -24,18 +28,19 @@ export default function DomainCapsule({ onPress }) {
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1, 
+    // Exact iOS 26 Light Theme Drop Shadow
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.12, 
     shadowRadius: 12,
-    elevation: 6, 
+    elevation: 6, // For Android shadow
   },
   solidFrame: {
     height: LAYOUT.bottomBar.squircleHeight,
     borderRadius: LAYOUT.bottomBar.squircleRadius,
-    backgroundColor: '#FFFFFF', 
+    backgroundColor: '#FFFFFF', // 100% Opaque White
     borderWidth: 0.5,
-    borderColor: 'rgba(0, 0, 0, 0.05)', 
+    borderColor: 'rgba(0, 0, 0, 0.05)', // Extremely subtle rim
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -43,9 +48,10 @@ const styles = StyleSheet.create({
   },
   domainText: {
     flex: 1,
-    color: '#000000', 
+    color: '#000000', // Black text
     fontSize: 16,
-    fontWeight: '500', // Uses system default sans-serif bolding
+    fontFamily: 'Inter', // Forced Inter font
+    fontWeight: '500',
     textAlign: 'center',
   },
 });
